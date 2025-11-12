@@ -26,11 +26,11 @@ Receptor → Genera Proof π → Envía π + R a Stylus → Contrato verifica �
 
 ## 📊 Hitos y Progreso General
 
-- [ ] **Hito 1:** Fundamentos ZK y Verificación On-Chain (1/6) ⚡ 17%
+- [ ] **Hito 1:** Fundamentos ZK y Verificación On-Chain (2/6) ⚡ 33%
 - [ ] **Hito 2:** Librería Off-Chain y Flujo de Acceso (0/5)
 - [ ] **Hito 3:** Frontend y Demo Funcional (0/6)
 
-**Progreso Total:** 1/17 tareas completadas (6%)
+**Progreso Total:** 2/17 tareas completadas (12%)
 
 ---
 
@@ -79,36 +79,48 @@ Crear la estructura de carpetas del monorepo y configurar herramientas básicas.
 ---
 
 #### [T1.2] Implementar Circuito Circom - Merkle Membership
-- [ ] **Estado:** Not Started
+- [x] **Estado:** ✅ Completed
 - **Prioridad:** 🔴 Crítica
 - **Estimación:** 2-3 horas
+- **Completado:** 12 Nov 2025
 
 **Descripción:**
 Implementar el circuito `merkle_membership.circom` que verifica que una wallet pertenece al árbol de Merkle usando Poseidon hash.
 
 **Tareas Específicas:**
-1. Instalar Circom y SnarkJS: `npm install -g circom snarkjs`
-2. Crear archivo `circuits/merkle_membership.circom`
-3. Implementar lógica:
+1. ✅ Instalar Circom y SnarkJS: Rust 1.91.1 + Circom 2.2.3
+2. ✅ Crear archivo `circuits/merkle_membership.circom`
+3. ✅ Implementar lógica:
    - Input privado: `wallet_address`, `merkle_siblings[10]`
    - Input público: `merkle_root`
    - Usar template Poseidon para hashing
-   - Verificar path completo hasta root
-4. Crear archivo de entrada de prueba: `circuits/input.json`
+   - Verificar path completo hasta root usando Mux1
+4. ✅ Crear archivo de entrada de prueba: `circuits/input.json`
 
 **Criterios de Aceptación:**
-- [ ] Circuito compila sin errores: `circom merkle_membership.circom --r1cs --wasm --sym`
-- [ ] Archivo `.r1cs` generado exitosamente
-- [ ] Archivo `.wasm` generado exitosamente
-- [ ] Input de prueba válido en `input.json`
-- [ ] Documentación del circuito en comentarios
+- [x] Circuito compila sin errores: `circom merkle_membership.circom --r1cs --wasm --sym`
+- [x] Archivo `.r1cs` generado exitosamente (730KB)
+- [x] Archivo `.wasm` generado exitosamente (1.9MB)
+- [x] Input de prueba válido en `input.json`
+- [x] Documentación del circuito en comentarios
 
-**Dependencias:** T1.1
+**Estadísticas del Circuito:**
+- Template instances: 143
+- Non-linear constraints: 2,666
+- Linear constraints: 2,939
+- Total wires: 5,627
+- Labels: 8,444
+
+**Dependencias:** T1.1 ✅
 
 **Archivos Creados:**
-- `circuits/merkle_membership.circom`
-- `circuits/input.json`
-- `circuits/README.md`
+- ✅ `circuits/merkle_membership.circom` (implementación completa)
+- ✅ `circuits/input.json` (template de entrada)
+- ✅ `circuits/package.json` (dependencias npm)
+- ✅ `circuits/build/merkle_membership.r1cs`
+- ✅ `circuits/build/merkle_membership.wasm`
+- ✅ `circuits/build/merkle_membership.sym`
+- ✅ Commit: `10e187c`
 
 ---
 

@@ -1,0 +1,12 @@
+{
+  "network": "arbitrum-sepolia",
+  "chainId": 421614,
+  "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+  "contractAddress": "0xa0539e9c8701e714f94400153eeed5d05af6e496",
+  "deploymentTx": "0x27ed2438fa36d357e2c42d646b877affa2039d4bf9c9d37e3c0a9301126a9136",
+  "activationTx": "0x2141d2e9e188efa2b5a5fcfe9ce3714c588345bb619346c25696780f3705a5de",
+  "deployer": "0x...",
+  "deployedAt": "2025-11-12",
+  "contractSize": "6.1 KiB",
+  "wasmSize": "17.8 KiB"
+}

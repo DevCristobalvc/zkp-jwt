@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/generate_proof.js",
+    "proof": "node test/generate_proof.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
   "dependencies": {
     "circom_tester": "^0.0.24",
     "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7",
     "snarkjs": "^0.7.5"
   }
 }

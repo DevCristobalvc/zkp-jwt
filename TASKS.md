@@ -1,0 +1,892 @@
+# 📋 ZKPJWT - Task Tracker
+
+**Proyecto:** Zero-Knowledge Proof JSON Web Token Protocol  
+**Fecha Inicio:** 12 de Noviembre, 2025  
+**Deadline ARG25:** 14 de Noviembre, 2025
+
+---
+
+## 🎯 MVP - Caso de Uso Principal
+
+**Título:** Acceso Privado a Mensaje Secreto con Verificación ZK On-Chain
+
+**Descripción:** Un usuario puede probar su pertenencia a una lista de wallets autorizadas y obtener acceso a un mensaje cifrado verificado por Arbitrum Stylus, sin revelar su wallet específica.
+
+### Flujo del Usuario
+
+```
+Emisor → Define lista wallets → Genera Merkle Root R → Cifra mensaje con K → Publica R en Stylus
+                                                                                    ↓
+Receptor → Genera Proof π → Envía π + R a Stylus → Contrato verifica → Evento AccessGranted(K)
+                                                                                    ↓
+                                                Frontend escucha evento → Descifra mensaje → ✅ Éxito
+```
+
+---
+
+## 📊 Hitos y Progreso General
+
+- [ ] **Hito 1:** Fundamentos ZK y Verificación On-Chain (0/6)
+- [ ] **Hito 2:** Librería Off-Chain y Flujo de Acceso (0/5)
+- [ ] **Hito 3:** Frontend y Demo Funcional (0/6)
+
+**Progreso Total:** 0/17 tareas completadas (0%)
+
+---
+
+## 🔐 HITO 1: Fundamentos ZK y Verificación On-Chain
+
+**Objetivo:** Tener el circuito ZK, generación de pruebas y verificación en Stylus funcionando end-to-end.
+
+### ✅ Tareas
+
+#### [T1.1] Setup Inicial del Proyecto
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 30 min
+
+**Descripción:**
+Crear la estructura de carpetas del monorepo y configurar herramientas básicas.
+
+**Tareas Específicas:**
+1. Crear estructura de carpetas: `circuits/`, `contracts/`, `library/`, `frontend/`, `tests/`
+2. Inicializar `package.json` en root (monorepo)
+3. Crear `.gitignore` apropiado
+4. Documentar estructura en README
+
+**Criterios de Aceptación:**
+- [x] Estructura de carpetas creada correctamente
+- [ ] `package.json` configurado con workspaces (si aplica)
+- [ ] `.gitignore` incluye: `node_modules/`, `build/`, `*.zkey`, `*.wasm`, `target/`
+- [ ] Commit inicial realizado
+
+**Dependencias:** Ninguna
+
+---
+
+#### [T1.2] Implementar Circuito Circom - Merkle Membership
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 2-3 horas
+
+**Descripción:**
+Implementar el circuito `merkle_membership.circom` que verifica que una wallet pertenece al árbol de Merkle usando Poseidon hash.
+
+**Tareas Específicas:**
+1. Instalar Circom y SnarkJS: `npm install -g circom snarkjs`
+2. Crear archivo `circuits/merkle_membership.circom`
+3. Implementar lógica:
+   - Input privado: `wallet_address`, `merkle_siblings[10]`
+   - Input público: `merkle_root`
+   - Usar template Poseidon para hashing
+   - Verificar path completo hasta root
+4. Crear archivo de entrada de prueba: `circuits/input.json`
+
+**Criterios de Aceptación:**
+- [ ] Circuito compila sin errores: `circom merkle_membership.circom --r1cs --wasm --sym`
+- [ ] Archivo `.r1cs` generado exitosamente
+- [ ] Archivo `.wasm` generado exitosamente
+- [ ] Input de prueba válido en `input.json`
+- [ ] Documentación del circuito en comentarios
+
+**Dependencias:** T1.1
+
+**Archivos Creados:**
+- `circuits/merkle_membership.circom`
+- `circuits/input.json`
+- `circuits/README.md`
+
+---
+
+#### [T1.3] Trusted Setup y Generación de Keys
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 1 hora
+
+**Descripción:**
+Ejecutar el trusted setup de Groth16 para generar las proving/verification keys.
+
+**Tareas Específicas:**
+1. Descargar Powers of Tau para bn128: `snarkjs powersoftau new bn128 12 pot12_0000.ptau -v`
+2. Contribuir al ceremony: `snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution"`
+3. Preparar phase 2: `snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v`
+4. Generar `.zkey`: `snarkjs groth16 setup merkle_membership.r1cs pot12_final.ptau merkle_0000.zkey`
+5. Contribuir al zkey: `snarkjs zkey contribute merkle_0000.zkey merkle_final.zkey --name="Contribution"`
+6. Exportar verification key: `snarkjs zkey export verificationkey merkle_final.zkey verification_key.json`
+
+**Criterios de Aceptación:**
+- [ ] `merkle_final.zkey` generado exitosamente (tamaño ~10-50MB)
+- [ ] `verification_key.json` exportado
+- [ ] `.ptau` files almacenados correctamente
+- [ ] Script automatizado en `circuits/setup.sh` para reproducir el proceso
+
+**Dependencias:** T1.2
+
+**Archivos Creados:**
+- `circuits/build/merkle_final.zkey`
+- `circuits/build/verification_key.json`
+- `circuits/setup.sh`
+
+---
+
+#### [T1.4] Script de Generación de Pruebas (Node.js)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 2 horas
+
+**Descripción:**
+Crear un script Node.js que genere pruebas ZK válidas para testing.
+
+**Tareas Específicas:**
+1. Crear `circuits/test/generate_proof.js`
+2. Implementar:
+   - Construcción de Merkle Tree con 3 wallets de prueba
+   - Generación de input.json dinámicamente
+   - Llamada a snarkjs para generar proof
+   - Exportación de proof + public signals
+3. Crear test con wallet válida (debe pasar)
+4. Crear test con wallet inválida (debe fallar)
+
+**Criterios de Aceptación:**
+- [ ] Script ejecuta sin errores: `node circuits/test/generate_proof.js`
+- [ ] Genera `proof.json` y `public.json` correctamente
+- [ ] Proof válida verifica localmente: `snarkjs groth16 verify verification_key.json public.json proof.json`
+- [ ] Output muestra "OK!" para proof válida
+- [ ] Prueba con wallet inválida falla la verificación
+- [ ] Tiempo de generación < 5 segundos
+
+**Dependencias:** T1.3
+
+**Archivos Creados:**
+- `circuits/test/generate_proof.js`
+- `circuits/test/proof.json` (ejemplo)
+- `circuits/test/public.json` (ejemplo)
+
+---
+
+#### [T1.5] Setup Arbitrum Stylus + Smart Contract Base
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 2-3 horas
+
+**Descripción:**
+Configurar el entorno Arbitrum Stylus y crear el esqueleto del smart contract en Rust.
+
+**Tareas Específicas:**
+1. Instalar Rust y Cargo Stylus:
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   cargo install cargo-stylus
+   ```
+2. Crear proyecto: `cargo stylus new zkpjwt-verifier`
+3. Configurar `Cargo.toml` con dependencias:
+   - `stylus-sdk`
+   - `alloy-primitives`
+   - Librería para verificación Groth16 (investigar opciones)
+4. Implementar estructura básica en `src/lib.rs`:
+   ```rust
+   #[storage]
+   struct ZKPJWTVerifier {
+       merkle_roots: StorageMap<U256, bool>,
+   }
+   
+   impl ZKPJWTVerifier {
+       pub fn set_root(&mut self, root: U256) { }
+       pub fn unlock_message(&self, proof: Vec<u8>, root: U256) -> Result<(), Vec<u8>> { }
+   }
+   ```
+5. Configurar Arbitrum Sepolia en `foundry.toml` o archivo de config
+
+**Criterios de Aceptación:**
+- [ ] Proyecto Rust compila sin errores: `cargo build --target wasm32-unknown-unknown`
+- [ ] `.wasm` generado exitosamente
+- [ ] Funciones stub implementadas (sin lógica aún)
+- [ ] Configuración de red Arbitrum Sepolia lista
+- [ ] Documentación de setup en `contracts/README.md`
+
+**Dependencias:** T1.1
+
+**Archivos Creados:**
+- `contracts/Cargo.toml`
+- `contracts/src/lib.rs`
+- `contracts/README.md`
+
+---
+
+#### [T1.6] Implementar Verificador Groth16 en Stylus
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 4-5 horas
+
+**Descripción:**
+Implementar la lógica de verificación de pruebas Groth16 en el smart contract Rust.
+
+**Tareas Específicas:**
+1. Exportar verificador de Circom a Solidity: `snarkjs zkey export solidityverifier merkle_final.zkey verifier.sol`
+2. Analizar lógica de verificación en `verifier.sol`
+3. Portar lógica a Rust usando:
+   - `ark-bn254` para curva BN254
+   - `ark-groth16` para verificación
+   - Adaptar a Stylus SDK
+4. Implementar función `verify_proof()`:
+   - Parsear proof bytes
+   - Parsear public signals
+   - Ejecutar verificación Groth16
+   - Return true/false
+5. Integrar en `unlock_message()`:
+   - Verificar que root existe en storage
+   - Llamar a `verify_proof()`
+   - Emitir evento `AccessGranted` si válido
+6. Agregar eventos:
+   ```rust
+   #[event]
+   pub struct AccessGranted {
+       pub user: Address,
+       pub root: U256,
+   }
+   
+   #[event]
+   pub struct AccessDenied {
+       pub user: Address,
+   }
+   ```
+
+**Criterios de Aceptación:**
+- [ ] Función `verify_proof()` implementada completamente
+- [ ] Compila sin errores
+- [ ] Tests unitarios en Rust pasan (mock proof)
+- [ ] Eventos definidos y se emiten correctamente
+- [ ] Gas estimado documentado
+- [ ] Código comentado y documentado
+
+**Dependencias:** T1.3, T1.5
+
+**Archivos Modificados:**
+- `contracts/src/lib.rs`
+- `contracts/src/verifier.rs` (nuevo, lógica Groth16)
+
+---
+
+#### [T1.7] Deploy y Testing E2E Backend
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🔴 Crítica
+- **Estimación:** 2 horas
+
+**Descripción:**
+Desplegar el contrato en Arbitrum Sepolia y verificar el flujo completo de prueba.
+
+**Tareas Específicas:**
+1. Configurar wallet con ETH de testnet (faucet Arbitrum Sepolia)
+2. Deploy contrato: `cargo stylus deploy --private-key <KEY>`
+3. Verificar deployment en Arbiscan
+4. Crear script de test E2E: `tests/e2e_backend.js`
+   - Generar Merkle root
+   - Llamar a `set_root(R)` on-chain
+   - Generar proof válida
+   - Llamar a `unlock_message(π, R)`
+   - Verificar evento `AccessGranted` emitido
+   - Intentar con proof inválida → debe emitir `AccessDenied`
+5. Documentar gas costs de cada operación
+
+**Criterios de Aceptación:**
+- [ ] Contrato desplegado exitosamente en Arbitrum Sepolia
+- [ ] Address del contrato documentado en `contracts/DEPLOYMENT.md`
+- [ ] Script E2E ejecuta sin errores
+- [ ] Transacción con proof válida exitosa (revisar en Arbiscan)
+- [ ] Evento `AccessGranted` emitido y capturado
+- [ ] Transacción con proof inválida falla correctamente
+- [ ] Gas costs documentados (comparar con Solidity si es posible)
+- [ ] Screenshot de transacción exitosa en docs
+
+**Dependencias:** T1.4, T1.6
+
+**Archivos Creados:**
+- `contracts/DEPLOYMENT.md`
+- `tests/e2e_backend.js`
+- `docs/gas_analysis.md`
+
+---
+
+## 📚 HITO 2: Librería Off-Chain y Flujo de Acceso
+
+**Objetivo:** Construir las funciones de sender y receiver en una librería TypeScript reutilizable.
+
+### ✅ Tareas
+
+#### [T2.1] Setup Librería TypeScript
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 1 hora
+
+**Descripción:**
+Inicializar el proyecto de librería NPM con TypeScript.
+
+**Tareas Específicas:**
+1. `cd library && npm init -y`
+2. Instalar dependencias:
+   ```bash
+   npm install ethers merkletreejs poseidon-lite snarkjs
+   npm install -D typescript @types/node ts-node
+   ```
+3. Configurar `tsconfig.json` para library
+4. Crear estructura:
+   ```
+   library/src/
+   ├── index.ts
+   ├── merkle.ts
+   ├── encryption.ts
+   ├── zkpjwt.ts
+   ├── proof.ts
+   └── types.ts
+   ```
+5. Configurar build script en `package.json`
+
+**Criterios de Aceptación:**
+- [ ] `npm install` ejecuta sin errores
+- [ ] `npm run build` compila TypeScript → JavaScript
+- [ ] Archivos `.d.ts` generados para tipos
+- [ ] `index.ts` exporta todas las funciones principales
+- [ ] README con ejemplos de uso creado
+
+**Dependencias:** T1.7 (para testing integrado)
+
+**Archivos Creados:**
+- `library/package.json`
+- `library/tsconfig.json`
+- `library/src/index.ts`
+- `library/src/types.ts`
+
+---
+
+#### [T2.2] Implementar Módulo Merkle (Sender)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 2 horas
+
+**Descripción:**
+Crear funciones para generar Merkle Trees usando Poseidon hash.
+
+**Tareas Específicas:**
+1. Implementar en `library/src/merkle.ts`:
+   ```typescript
+   export function createMerkleTree(wallets: string[]): MerkleTree
+   export function getMerkleRoot(tree: MerkleTree): string
+   export function getMerklePath(tree: MerkleTree, wallet: string): MerklePath
+   export function verifyMerkleProof(wallet: string, path: MerklePath, root: string): boolean
+   ```
+2. Usar `poseidon-lite` para hashing (compatible con Circom)
+3. Normalizar addresses (checksum)
+4. Soportar hasta 1024 wallets (depth = 10)
+5. Unit tests en `library/tests/merkle.test.ts`
+
+**Criterios de Aceptación:**
+- [ ] `createMerkleTree()` genera árbol correctamente
+- [ ] Root generado coincide con el del circuito Circom
+- [ ] `getMerklePath()` retorna path correcto
+- [ ] `verifyMerkleProof()` valida correctamente (local)
+- [ ] Tests unitarios pasan: `npm test`
+- [ ] Funciones documentadas con JSDoc
+
+**Dependencias:** T2.1
+
+**Archivos Creados:**
+- `library/src/merkle.ts`
+- `library/tests/merkle.test.ts`
+
+---
+
+#### [T2.3] Implementar Módulo Encryption (Sender/Receiver)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 1.5 horas
+
+**Descripción:**
+Implementar funciones de cifrado/descifrado AES-256-GCM.
+
+**Tareas Específicas:**
+1. Implementar en `library/src/encryption.ts`:
+   ```typescript
+   export function encryptMessage(message: string, key?: Buffer): EncryptedData
+   export function decryptMessage(encryptedData: EncryptedData, key: Buffer): string
+   export function generateKey(): Buffer
+   ```
+2. Usar `crypto` nativo de Node.js
+3. Generar key aleatoria si no se provee
+4. Incluir IV y auth tag en `EncryptedData`
+5. Unit tests en `library/tests/encryption.test.ts`
+
+**Criterios de Aceptación:**
+- [ ] `encryptMessage()` cifra correctamente
+- [ ] `decryptMessage()` descifra correctamente
+- [ ] Key aleatoria genera 32 bytes
+- [ ] IV es único por cifrado
+- [ ] Tests de encrypt → decrypt exitosos
+- [ ] Manejo de errores (wrong key, corrupted data)
+
+**Dependencias:** T2.1
+
+**Archivos Creados:**
+- `library/src/encryption.ts`
+- `library/tests/encryption.test.ts`
+
+---
+
+#### [T2.4] Implementar Módulo ZKPJWT Token (Sender/Receiver)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 1.5 horas
+
+**Descripción:**
+Definir el formato del token ZKPJWT y funciones para crear/parsear.
+
+**Tareas Específicas:**
+1. Definir estructura en `library/src/types.ts`:
+   ```typescript
+   interface ZKPJWTToken {
+     version: string;          // "1.0"
+     merkle_root: string;      // Hex string
+     encrypted_message: {
+       ciphertext: string;     // Base64
+       iv: string;             // Base64
+       auth_tag: string;       // Base64
+     };
+     key_encrypted?: string;   // Opcional: key cifrada con receiver pubkey
+     metadata?: {
+       timestamp: number;
+       expires?: number;
+     };
+   }
+   ```
+2. Implementar en `library/src/zkpjwt.ts`:
+   ```typescript
+   export function createZKPJWT(message: string, wallets: string[]): ZKPJWTToken
+   export function parseZKPJWT(token: string): ZKPJWTToken
+   export function serializeZKPJWT(token: ZKPJWTToken): string
+   ```
+3. Integrar con módulos merkle y encryption
+4. Unit tests
+
+**Criterios de Aceptación:**
+- [ ] Token se serializa a JSON válido
+- [ ] Token incluye toda la info necesaria
+- [ ] `createZKPJWT()` integra merkle + encryption
+- [ ] `parseZKPJWT()` valida formato
+- [ ] Tests de create → serialize → parse exitosos
+
+**Dependencias:** T2.2, T2.3
+
+**Archivos Creados:**
+- `library/src/zkpjwt.ts`
+- `library/tests/zkpjwt.test.ts`
+
+---
+
+#### [T2.5] Implementar Módulo Proof Generation (Receiver)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 2 horas
+
+**Descripción:**
+Wrapper para generar pruebas ZK usando SnarkJS desde TypeScript.
+
+**Tareas Específicas:**
+1. Implementar en `library/src/proof.ts`:
+   ```typescript
+   export async function generateProof(
+     wallet: string,
+     merkleTree: MerkleTree,
+     circuitWasm: string,
+     zkeyPath: string
+   ): Promise<ProofData>
+   
+   export async function verifyProofLocal(
+     proof: ProofData,
+     verificationKey: any
+   ): Promise<boolean>
+   ```
+2. Integrar con SnarkJS
+3. Generar input.json automáticamente desde Merkle tree
+4. Retornar proof + public signals formateados
+5. Incluir archivos .wasm y .zkey en `library/build/`
+6. Integration test con circuito real
+
+**Criterios de Aceptación:**
+- [ ] `generateProof()` genera proof válida
+- [ ] Proof verifica localmente con `verifyProofLocal()`
+- [ ] Input.json generado correctamente desde MerkleTree
+- [ ] Archivos de circuito empaquetados en librería
+- [ ] Manejo de errores (wallet no en tree)
+- [ ] Test E2E: create tree → generate proof → verify
+
+**Dependencias:** T2.2, T1.7
+
+**Archivos Creados:**
+- `library/src/proof.ts`
+- `library/tests/proof.test.ts`
+- `library/build/merkle_membership.wasm` (copiado)
+- `library/build/merkle_final.zkey` (copiado)
+
+---
+
+#### [T2.6] Testing E2E Librería Completa
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟡 Alta
+- **Estimación:** 1.5 horas
+
+**Descripción:**
+Test end-to-end completo del flujo sender → receiver usando la librería.
+
+**Tareas Específicas:**
+1. Crear `library/tests/e2e.test.ts`
+2. Simular flujo completo:
+   ```typescript
+   // Sender
+   const token = createZKPJWT(message, wallets);
+   const tree = createMerkleTree(wallets);
+   const root = getMerkleRoot(tree);
+   // Publish root to contract (mock)
+   
+   // Receiver
+   const parsed = parseZKPJWT(tokenString);
+   const proof = await generateProof(myWallet, tree, ...);
+   const valid = await verifyProofLocal(proof, vkey);
+   // Submit proof to contract (mock)
+   const decrypted = decryptMessage(parsed.encrypted_message, key);
+   ```
+3. Test con múltiples wallets (3, 10, 100)
+4. Test con wallet no autorizada (debe fallar)
+5. Medir performance
+
+**Criterios de Aceptación:**
+- [ ] Test E2E completo pasa
+- [ ] Flujo sender → receiver funciona
+- [ ] Message cifrado → descifrado correctamente
+- [ ] Proof generada y verificada
+- [ ] Tests con diferentes tamaños de tree pasan
+- [ ] Wallet no autorizada falla en proof generation
+- [ ] Documentación del flujo completo
+
+**Dependencias:** T2.1, T2.2, T2.3, T2.4, T2.5
+
+**Archivos Creados:**
+- `library/tests/e2e.test.ts`
+- `library/EXAMPLES.md`
+
+---
+
+## 🖥️ HITO 3: Frontend y Demo Funcional
+
+**Objetivo:** Construir un frontend React para demostrar el flujo completo con MetaMask.
+
+### ✅ Tareas
+
+#### [T3.1] Setup Proyecto React + Vite
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 1 hora
+
+**Descripción:**
+Inicializar proyecto frontend con React, TypeScript y Vite.
+
+**Tareas Específicas:**
+1. Crear proyecto: `npm create vite@latest frontend -- --template react-ts`
+2. Instalar dependencias:
+   ```bash
+   npm install ethers @rainbow-me/rainbowkit wagmi
+   npm install -D tailwindcss postcss autoprefixer
+   ```
+3. Configurar Tailwind CSS
+4. Configurar RainbowKit para MetaMask
+5. Setup estructura de componentes:
+   ```
+   src/
+   ├── App.tsx
+   ├── components/
+   │   ├── SenderPanel.tsx
+   │   ├── ReceiverPanel.tsx
+   │   └── ConnectWallet.tsx
+   ├── hooks/
+   │   └── useContract.ts
+   └── lib/
+       └── zkpjwt.ts (wrapper de librería)
+   ```
+
+**Criterios de Aceptación:**
+- [ ] `npm run dev` inicia servidor sin errores
+- [ ] Proyecto carga en `http://localhost:5173`
+- [ ] Tailwind CSS funcionando
+- [ ] RainbowKit conecta con MetaMask
+- [ ] Estructura de carpetas creada
+
+**Dependencias:** T2.6
+
+**Archivos Creados:**
+- `frontend/package.json`
+- `frontend/vite.config.ts`
+- `frontend/tailwind.config.js`
+- `frontend/src/App.tsx`
+
+---
+
+#### [T3.2] Implementar Componente ConnectWallet
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 1 hora
+
+**Descripción:**
+Componente para conectar MetaMask y mostrar address.
+
+**Tareas Específicas:**
+1. Implementar `components/ConnectWallet.tsx`:
+   - Botón "Connect Wallet"
+   - Mostrar address conectada (truncated)
+   - Mostrar balance ETH
+   - Botón disconnect
+   - Indicador de red (debe ser Arbitrum Sepolia)
+2. Usar RainbowKit + Wagmi
+3. Agregar switch de red si está en red incorrecta
+
+**Criterios de Aceptación:**
+- [ ] Botón conecta MetaMask correctamente
+- [ ] Address se muestra truncada: `0x1234...5678`
+- [ ] Balance se actualiza
+- [ ] Detecta red incorrecta y muestra warning
+- [ ] Switch a Arbitrum Sepolia funciona
+- [ ] Disconnect funciona correctamente
+
+**Dependencias:** T3.1
+
+**Archivos Creados:**
+- `frontend/src/components/ConnectWallet.tsx`
+
+---
+
+#### [T3.3] Implementar Panel Sender (Emisor)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 2 horas
+
+**Descripción:**
+Panel para que el emisor cifre un mensaje y publique el Merkle root.
+
+**Tareas Específicas:**
+1. Implementar `components/SenderPanel.tsx`:
+   - Textarea para ingresar mensaje
+   - Input para lista de wallets (textarea, una por línea)
+   - Botón "Encrypt & Generate Token"
+   - Mostrar ZKPJWT token generado (JSON pretty)
+   - Botón "Publish Root On-Chain"
+   - Mostrar transaction hash
+2. Integrar con librería zkpjwt:
+   - `createZKPJWT(message, wallets)`
+   - `getMerkleRoot(tree)`
+3. Integrar con contrato Stylus:
+   - Llamar a `set_root(root)`
+   - Esperar confirmación de tx
+4. UI/UX: Loading states, success/error messages
+
+**Criterios de Aceptación:**
+- [ ] Textarea acepta mensaje (max 500 chars)
+- [ ] Lista de wallets valida addresses
+- [ ] Token ZKPJWT se genera correctamente
+- [ ] Token se muestra formateado y copiable
+- [ ] Transacción `set_root()` se envía
+- [ ] Transaction hash se muestra con link a Arbiscan
+- [ ] Loading state durante tx
+- [ ] Success message al confirmar
+
+**Dependencias:** T3.2, T2.6, T1.7
+
+**Archivos Creados:**
+- `frontend/src/components/SenderPanel.tsx`
+- `frontend/src/hooks/useContract.ts`
+
+---
+
+#### [T3.4] Implementar Panel Receiver (Receptor)
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 3 horas
+
+**Descripción:**
+Panel para que el receptor genere prueba ZK, la verifique on-chain y descifre el mensaje.
+
+**Tareas Específicas:**
+1. Implementar `components/ReceiverPanel.tsx`:
+   - Textarea para pegar ZKPJWT token
+   - Botón "Parse Token"
+   - Mostrar info del token (root, metadata)
+   - Botón "Generate ZK Proof" (requiere wallet conectada)
+   - Mostrar proof generada (JSON)
+   - Botón "Unlock Message On-Chain"
+   - Loading durante proof generation (~3-5 seg)
+   - Mostrar transaction hash
+2. Integrar con librería:
+   - `parseZKPJWT(tokenString)`
+   - `generateProof(wallet, tree, ...)`
+3. Integrar con contrato:
+   - Llamar a `unlock_message(proof, root)`
+   - Escuchar evento `AccessGranted`
+4. Al recibir evento, descifrar mensaje
+5. Mostrar mensaje descifrado en un alert o modal
+
+**Criterios de Aceptación:**
+- [ ] Token se parsea correctamente
+- [ ] Info del token se muestra
+- [ ] Proof se genera al hacer click (loading state)
+- [ ] Proof se muestra formateada
+- [ ] Transacción `unlock_message()` se envía
+- [ ] Listener captura evento `AccessGranted`
+- [ ] Mensaje se descifra automáticamente
+- [ ] Mensaje descifrado se muestra en UI
+- [ ] Manejo de errores (wallet no autorizada, proof inválida)
+
+**Dependencias:** T3.2, T2.6, T1.7
+
+**Archivos Creados:**
+- `frontend/src/components/ReceiverPanel.tsx`
+- `frontend/src/components/MessageModal.tsx`
+
+---
+
+#### [T3.5] Integración UI Completa y Styling
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 2 horas
+
+**Descripción:**
+Integrar ambos paneles en la UI principal y aplicar diseño profesional.
+
+**Tareas Específicas:**
+1. Implementar `App.tsx`:
+   - Header con logo y "ZKPJWT Demo"
+   - Tabs o split view: "Sender" | "Receiver"
+   - ConnectWallet en header
+   - Footer con links (GitHub, Docs)
+2. Diseño con Tailwind:
+   - Dark mode by default
+   - Cards para cada panel
+   - Animaciones sutiles
+   - Responsive design (mobile-friendly)
+3. Agregar tooltips explicativos
+4. Agregar link "How it works" con modal explicativo
+
+**Criterios de Aceptación:**
+- [ ] UI profesional y moderna
+- [ ] Navegación entre panels fluida
+- [ ] Dark mode aplicado consistentemente
+- [ ] Responsive en mobile y desktop
+- [ ] Tooltips ayudan a entender el flujo
+- [ ] Modal "How it works" explica arquitectura
+- [ ] Footer con links funcionales
+
+**Dependencias:** T3.3, T3.4
+
+**Archivos Modificados:**
+- `frontend/src/App.tsx`
+- `frontend/src/index.css`
+
+---
+
+#### [T3.6] Testing E2E Frontend + Documentación Final
+- [ ] **Estado:** Not Started
+- **Prioridad:** 🟢 Media
+- **Estimación:** 2 horas
+
+**Descripción:**
+Testing end-to-end del flujo completo y documentación final del proyecto.
+
+**Tareas Específicas:**
+1. Test E2E manual completo:
+   - Conectar MetaMask (Arbitrum Sepolia)
+   - Sender: Crear mensaje con 3 wallets
+   - Verificar token generado correctamente
+   - Publicar root on-chain
+   - Copiar token
+   - Receiver: Pegar token
+   - Generar proof con wallet autorizada
+   - Unlock message on-chain
+   - Verificar mensaje descifrado correcto
+2. Test con wallet NO autorizada (debe fallar)
+3. Grabar video demo (~2 min)
+4. Actualizar README principal con:
+   - Demo link (deploy en Vercel/Netlify)
+   - Screenshots del flujo
+   - Instrucciones de uso
+   - Gas costs documentados
+5. Actualizar `contexto.md` con progreso Week 3
+
+**Criterios de Aceptación:**
+- [ ] Flujo E2E completo funciona sin errores
+- [ ] Video demo grabado y subido (YouTube/Loom)
+- [ ] Frontend deployado en Vercel/Netlify
+- [ ] README actualizado con demo link
+- [ ] Screenshots del flujo agregados
+- [ ] Gas analysis documentado
+- [ ] `contexto.md` actualizado con Week 3 completada
+- [ ] Todos los archivos commiteados
+
+**Dependencias:** T3.5, todos los anteriores
+
+**Archivos Actualizados:**
+- `README.md`
+- `contexto.md`
+- `docs/USER_GUIDE.md` (nuevo)
+- `docs/DEMO_VIDEO.md` (link)
+
+---
+
+## 📈 Métricas de Éxito
+
+### Métricas Técnicas
+- [ ] **Gas Cost (set_root):** < 100k gas
+- [ ] **Gas Cost (unlock_message):** < 500k gas (Stylus) vs ~2M (Solidity)
+- [ ] **Proof Generation Time:** < 5 segundos
+- [ ] **On-Chain Verification Time:** < 1 segundo
+- [ ] **Library Bundle Size:** < 500KB
+
+### Métricas de Funcionalidad
+- [ ] **Test Coverage:** > 80%
+- [ ] **E2E Tests Passing:** 100%
+- [ ] **Zero Security Vulnerabilities:** En dependencias críticas
+- [ ] **Documentation Coverage:** Todos los módulos documentados
+
+### Métricas de UX
+- [ ] **Wallet Connection:** < 3 clicks
+- [ ] **Full Flow Completion:** < 2 minutos
+- [ ] **Mobile Responsive:** 100%
+- [ ] **Error Messages:** Claros y accionables
+
+---
+
+## 🚀 Deployment Checklist
+
+- [ ] Smart contract deployed en Arbitrum Sepolia
+- [ ] Contract verified en Arbiscan
+- [ ] Frontend deployed en Vercel/Netlify
+- [ ] Library publicada en npm (opcional para MVP)
+- [ ] Demo video subido
+- [ ] README con instrucciones completas
+- [ ] GitHub repo público
+- [ ] PR a ARG25 Projects repo
+
+---
+
+## 📝 Notas y Aprendizajes
+
+### Decisiones Técnicas
+- **Poseidon Hash:** Elegido por compatibilidad con Circom y eficiencia en ZK
+- **Groth16:** Más rápido que PLONK para verificación on-chain
+- **Stylus:** 10x más eficiente que Solidity para verificación ZK
+- **AES-256-GCM:** Estándar industry para cifrado simétrico
+
+### Challenges Encontrados
+_Se irá actualizando durante implementación_
+
+### Optimizaciones Aplicadas
+_Se irá actualizando durante implementación_
+
+---
+
+**Última Actualización:** 12 de Noviembre, 2025  
+**Próxima Revisión:** Al completar cada hito

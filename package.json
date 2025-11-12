@@ -1,0 +1,49 @@
+{
+  "name": "zkpjwt-monorepo",
+  "version": "0.1.0",
+  "description": "Zero-Knowledge Proof JSON Web Token Protocol - Privacy-preserving access control with Arbitrum Stylus",
+  "private": true,
+  "workspaces": [
+    "library",
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "clean": "rm -rf node_modules circuits/build library/dist library/node_modules frontend/dist frontend/node_modules",
+    "setup:circuits": "cd circuits && ./setup.sh",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build:library": "npm run build --workspace=library",
+    "test:library": "npm run test --workspace=library",
+    "test:e2e": "node tests/e2e_backend.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevCristobalvc/zkp-jwt.git"
+  },
+  "keywords": [
+    "zero-knowledge",
+    "zkp",
+    "jwt",
+    "arbitrum",
+    "stylus",
+    "privacy",
+    "encryption",
+    "merkle-tree",
+    "groth16",
+    "circom"
+  ],
+  "author": "DevCristobalvc",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevCristobalvc/zkp-jwt/issues"
+  },
+  "homepage": "https://github.com/DevCristobalvc/zkp-jwt#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

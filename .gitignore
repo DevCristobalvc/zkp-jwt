@@ -1,0 +1,81 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Build outputs
+dist/
+build/
+*.wasm
+*.r1cs
+*.sym
+*.zkey
+*.ptau
+verification_key.json
+
+# Circuits compiled files
+circuits/build/*.wasm
+circuits/build/*.zkey
+circuits/build/*.r1cs
+circuits/build/*.sym
+circuits/*.ptau
+circuits/proof.json
+circuits/public.json
+circuits/input.json
+
+# Rust / Stylus
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Frontend
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+
+# Library
+library/dist/
+library/build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Keys and sensitive data
+*.key
+*.pem
+private_keys/
+.secret
+
+# OS
+.DS_Store
+Thumbs.db

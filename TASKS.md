@@ -125,26 +125,34 @@ Implementar el circuito `merkle_membership.circom` que verifica que una wallet p
 ---
 
 #### [T1.3] Trusted Setup y Generación de Keys
-- [ ] **Estado:** Not Started
+- [x] **Estado:** Completado ✅
 - **Prioridad:** 🔴 Crítica
 - **Estimación:** 1 hora
+- **Completado:** 12 Nov 2025
 
 **Descripción:**
 Ejecutar el trusted setup de Groth16 para generar las proving/verification keys.
 
 **Tareas Específicas:**
-1. Descargar Powers of Tau para bn128: `snarkjs powersoftau new bn128 12 pot12_0000.ptau -v`
-2. Contribuir al ceremony: `snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution"`
-3. Preparar phase 2: `snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v`
-4. Generar `.zkey`: `snarkjs groth16 setup merkle_membership.r1cs pot12_final.ptau merkle_0000.zkey`
-5. Contribuir al zkey: `snarkjs zkey contribute merkle_0000.zkey merkle_final.zkey --name="Contribution"`
-6. Exportar verification key: `snarkjs zkey export verificationkey merkle_final.zkey verification_key.json`
+1. ✅ Descargar Powers of Tau para bn128 (actualizado a pot14 por tamaño del circuito)
+2. ✅ Contribuir al ceremony: contribution hash df6c81b3...
+3. ✅ Preparar phase 2: generado pot14_final.ptau (18MB)
+4. ✅ Generar `.zkey`: merkle_0000.zkey con circuit hash 7e598532...
+5. ✅ Contribuir al zkey: merkle_final.zkey (2.4MB)
+6. ✅ Exportar verification key: verification_key.json (2.9KB)
 
 **Criterios de Aceptación:**
-- [ ] `merkle_final.zkey` generado exitosamente (tamaño ~10-50MB)
-- [ ] `verification_key.json` exportado
-- [ ] `.ptau` files almacenados correctamente
-- [ ] Script automatizado en `circuits/setup.sh` para reproducir el proceso
+- [x] `merkle_final.zkey` generado exitosamente (2.4MB)
+- [x] `verification_key.json` exportado
+- [x] `.ptau` files almacenados correctamente
+- [x] Script automatizado en `circuits/setup.sh` para reproducir el proceso
+
+**Archivos Creados:**
+- ✅ `circuits/build/pot14_final.ptau` (18MB)
+- ✅ `circuits/build/merkle_final.zkey` (2.4MB)
+- ✅ `circuits/build/verification_key.json` (2.9KB)
+- ✅ `circuits/setup.sh` (script automatizado)
+- ✅ Commit: `fabe9fa`
 
 **Dependencias:** T1.2
 

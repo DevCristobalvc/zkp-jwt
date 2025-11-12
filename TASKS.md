@@ -164,37 +164,40 @@ Ejecutar el trusted setup de Groth16 para generar las proving/verification keys.
 ---
 
 #### [T1.4] Script de Generación de Pruebas (Node.js)
-- [ ] **Estado:** Not Started
+- [x] **Estado:** Completado ✅
 - **Prioridad:** 🔴 Crítica
 - **Estimación:** 2 horas
+- **Completado:** 12 Nov 2025
 
 **Descripción:**
 Crear un script Node.js que genere pruebas ZK válidas para testing.
 
 **Tareas Específicas:**
-1. Crear `circuits/test/generate_proof.js`
-2. Implementar:
-   - Construcción de Merkle Tree con 3 wallets de prueba
-   - Generación de input.json dinámicamente
+1. ✅ Crear `circuits/test/generate_proof.js`
+2. ✅ Implementar:
+   - Construcción de Merkle Tree con 8 wallets de prueba
+   - Generación de input.json dinámicamente usando Poseidon
    - Llamada a snarkjs para generar proof
    - Exportación de proof + public signals
-3. Crear test con wallet válida (debe pasar)
-4. Crear test con wallet inválida (debe fallar)
+3. ✅ Crear test con wallet válida (debe pasar)
+4. ✅ Crear test con wallet inválida (debe fallar)
 
 **Criterios de Aceptación:**
-- [ ] Script ejecuta sin errores: `node circuits/test/generate_proof.js`
-- [ ] Genera `proof.json` y `public.json` correctamente
-- [ ] Proof válida verifica localmente: `snarkjs groth16 verify verification_key.json public.json proof.json`
-- [ ] Output muestra "OK!" para proof válida
-- [ ] Prueba con wallet inválida falla la verificación
-- [ ] Tiempo de generación < 5 segundos
+- [x] Script ejecuta sin errores: `npm test` en circuits/
+- [x] Genera `proof.json` y `public.json` correctamente
+- [x] Proof válida verifica localmente con snarkjs
+- [x] Output muestra "✅ Proof verification PASSED" para proof válida
+- [x] Prueba con wallet inválida falla en el circuito (assert failed)
+- [x] Tiempo de generación < 5 segundos
 
 **Dependencias:** T1.3
 
 **Archivos Creados:**
-- `circuits/test/generate_proof.js`
-- `circuits/test/proof.json` (ejemplo)
-- `circuits/test/public.json` (ejemplo)
+- ✅ `circuits/test/generate_proof.js` (script principal)
+- ✅ `circuits/build/proof.json` (proof generado)
+- ✅ `circuits/build/public.json` (señales públicas)
+- ✅ `circuits/build/input.json` (input del circuito)
+- ✅ Commit: `d6f1875`
 
 ---
 

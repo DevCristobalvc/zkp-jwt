@@ -26,11 +26,11 @@ Receptor → Genera Proof π → Envía π + R a Stylus → Contrato verifica �
 
 ## 📊 Hitos y Progreso General
 
-- [ ] **Hito 1:** Fundamentos ZK y Verificación On-Chain (0/6)
+- [ ] **Hito 1:** Fundamentos ZK y Verificación On-Chain (1/6) ⚡ 17%
 - [ ] **Hito 2:** Librería Off-Chain y Flujo de Acceso (0/5)
 - [ ] **Hito 3:** Frontend y Demo Funcional (0/6)
 
-**Progreso Total:** 0/17 tareas completadas (0%)
+**Progreso Total:** 1/17 tareas completadas (6%)
 
 ---
 
@@ -41,26 +41,40 @@ Receptor → Genera Proof π → Envía π + R a Stylus → Contrato verifica �
 ### ✅ Tareas
 
 #### [T1.1] Setup Inicial del Proyecto
-- [ ] **Estado:** Not Started
+- [x] **Estado:** ✅ Completed
 - **Prioridad:** 🔴 Crítica
 - **Estimación:** 30 min
+- **Completado:** 12 Nov 2025
 
 **Descripción:**
 Crear la estructura de carpetas del monorepo y configurar herramientas básicas.
 
 **Tareas Específicas:**
-1. Crear estructura de carpetas: `circuits/`, `contracts/`, `library/`, `frontend/`, `tests/`
-2. Inicializar `package.json` en root (monorepo)
-3. Crear `.gitignore` apropiado
-4. Documentar estructura en README
+1. ✅ Crear estructura de carpetas: `circuits/`, `contracts/`, `library/`, `frontend/`, `tests/`
+2. ✅ Inicializar `package.json` en root (monorepo)
+3. ✅ Crear `.gitignore` apropiado
+4. ✅ Documentar estructura en README
 
 **Criterios de Aceptación:**
 - [x] Estructura de carpetas creada correctamente
-- [ ] `package.json` configurado con workspaces (si aplica)
-- [ ] `.gitignore` incluye: `node_modules/`, `build/`, `*.zkey`, `*.wasm`, `target/`
-- [ ] Commit inicial realizado
+- [x] `package.json` configurado con workspaces
+- [x] `.gitignore` incluye: `node_modules/`, `build/`, `*.zkey`, `*.wasm`, `target/`
+- [x] Commit inicial realizado
 
 **Dependencias:** Ninguna
+
+**Archivos Creados:**
+- ✅ `package.json` (monorepo root con workspaces)
+- ✅ `.gitignore` (completo con Node, Rust, Circom)
+- ✅ `.nvmrc` (Node v18.18.0)
+- ✅ `LICENSE` (MIT)
+- ✅ `README.md` (documentación principal)
+- ✅ `circuits/README.md`
+- ✅ `contracts/README.md`
+- ✅ `library/README.md`
+- ✅ `frontend/README.md`
+- ✅ `docs/PROTOCOL_SPEC.md`
+- ✅ Commit: `ff19852`
 
 ---
 

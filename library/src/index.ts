@@ -24,8 +24,7 @@ export type {
 
 // Export main modules
 export { MerkleTreeBuilder } from './merkle';
-// export { ProofGenerator } from './prover'; // T2.3
-// export { ProofVerifier } from './verifier'; // T2.3
+export { ProofGenerator, ProofVerifier } from './prover';
 // export { ContractClient } from './contract'; // T2.4
 
 // Export constants

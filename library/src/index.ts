@@ -25,7 +25,7 @@ export type {
 // Export main modules
 export { MerkleTreeBuilder } from './merkle';
 export { ProofGenerator, ProofVerifier } from './prover';
-// export { ContractClient } from './contract'; // T2.4
+export { ContractClient } from './contract';
 
 // Export constants
 export { CIRCUIT_ARTIFACTS, CONTRACT_ABI, DEFAULT_CONTRACT_CONFIG } from './constants';

@@ -3,8 +3,8 @@ import { Copy, Check, Terminal, Package } from 'lucide-react';
 import { useState } from 'react';
 
 const codeBlocks = {
-  install: `npm install @zkpjwt/core`,
-  usage: `import { MerkleTreeBuilder, ProofGenerator, ContractClient } from '@zkpjwt/core';
+  install: `npm install zkpjwt-core`,
+  usage: `import { MerkleTreeBuilder, ProofGenerator, ContractClient } from 'zkpjwt-core';
 
 // 1. Build Merkle tree
 const builder = new MerkleTreeBuilder({ levels: 10 });

@@ -1,5 +1,5 @@
 {
-  "name": "@zkpjwt/core",
+  "name": "zkpjwt-core",
   "version": "0.1.0",
   "description": "Zero-Knowledge Proof JSON Web Token - Core library for proof generation and verification",
   "type": "module",

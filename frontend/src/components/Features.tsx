@@ -4,9 +4,21 @@ import { Shield, Zap, Lock, Code, Cpu, DollarSign, ArrowRight } from 'lucide-rea
 const features = [
   {
     icon: Shield,
-    title: 'Zero-Knowledge Proofs',
-    description: 'Groth16 proving system with BN254 curve. Prove membership without revealing your position in the tree.',
+    title: 'JWT + Zero-Knowledge',
+    description: 'Extends the most used Web2 authentication standard with Groth16 proofs. Prove identity without exposing sensitive data.',
     color: 'from-blue-500 to-cyan-500',
+  },
+  {
+    icon: Lock,
+    title: 'Privacy by Design',
+    description: 'JWT tokens lack privacy guarantees in Web3. ZKPJWT adds cryptographic privacy while maintaining compatibility with existing systems.',
+    color: 'from-green-500 to-emerald-500',
+  },
+  {
+    icon: Code,
+    title: 'Drop-in Library',
+    description: 'Production-ready TypeScript library. Integrate privacy-preserving authentication in your dApp with just a few lines of code.',
+    color: 'from-orange-500 to-red-500',
   },
   {
     icon: Zap,
@@ -15,27 +27,15 @@ const features = [
     color: 'from-purple-500 to-pink-500',
   },
   {
-    icon: Lock,
-    title: 'Privacy-First',
-    description: 'Merkle tree commitments with Poseidon hash. Your wallet address stays private during verification.',
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    icon: Code,
-    title: 'Developer Ready',
-    description: 'TypeScript library with full type safety. Integrate ZK proofs in minutes with our simple API.',
-    color: 'from-orange-500 to-red-500',
-  },
-  {
     icon: Cpu,
     title: 'Hybrid Verification',
-    description: 'Full Groth16 verification client-side, simple root check on-chain. Best of both worlds.',
+    description: 'Full Groth16 verification client-side with on-chain root validation. Optimal security and efficiency.',
     color: 'from-indigo-500 to-blue-500',
   },
   {
     icon: DollarSign,
     title: 'Cost Efficient',
-    description: 'Only ~21K gas per verification. 94% cheaper than full on-chain pairing checks.',
+    description: 'Only ~21K gas per verification. 94% cheaper than full on-chain pairing checks. Scalable for production.',
     color: 'from-yellow-500 to-amber-500',
   },
 ];
@@ -67,8 +67,9 @@ export default function Features() {
           className="text-center mb-16"
         >
           <h2 className="section-title mb-4">Why ZKPJWT?</h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Enterprise-grade zero-knowledge infrastructure built for Arbitrum Stylus
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Don't reinvent the wheel. <span className="text-white font-semibold">Adapt the most used Web2 standard</span> with zero-knowledge proofs. 
+            Enterprise-grade privacy infrastructure for the decentralized web.
           </p>
         </motion.div>
 

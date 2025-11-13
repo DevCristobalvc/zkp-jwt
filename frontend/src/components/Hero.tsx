@@ -30,8 +30,8 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-5xl md:text-7xl font-bold mb-6"
         >
-          <span className="block text-white mb-2">Zero-Knowledge Proof</span>
-          <span className="block text-gradient glow-text">Access Control</span>
+          <span className="block text-white mb-2">ZKP + JWT</span>
+          <span className="block text-gradient glow-text">Web2 Privacy for Web3</span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -41,8 +41,9 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12"
         >
-          Privacy-preserving authentication using Groth16 proofs and Merkle trees.
-          Built on Arbitrum Stylus with <span className="text-primary-400 font-semibold">10x cheaper gas</span> costs.
+          <span className="text-white font-semibold">JWT is the most used Web2 standard</span>, but it doesn't guarantee privacy in Web3. 
+          Instead of redefining the rules, we adapt them. <span className="text-primary-400 font-semibold">ZKPJWT brings zero-knowledge proofs to JWT</span> — 
+          a production-ready library for privacy-preserving authentication.
         </motion.p>
 
         {/* CTA Buttons */}

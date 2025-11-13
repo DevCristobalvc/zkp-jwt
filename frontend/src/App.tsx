@@ -1,5 +1,6 @@
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Problem from './components/Problem';
 import Features from './components/Features';
 import UseCases from './components/UseCases';
 import Documentation from './components/Documentation';
@@ -12,6 +13,7 @@ function App() {
     <div className="min-h-screen">
       <Navbar />
       <Hero />
+      <Problem />
       <Features />
       <UseCases />
       <Documentation />

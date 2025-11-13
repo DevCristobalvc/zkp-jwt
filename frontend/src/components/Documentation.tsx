@@ -81,8 +81,9 @@ export default function Documentation() {
           className="text-center mb-16"
         >
           <h2 className="section-title mb-4">Documentation</h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Get started in minutes with our TypeScript library
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Bridge Web2 and Web3 authentication. Get started in minutes with our production-ready library 
+            that brings <span className="text-primary-400 font-semibold">zero-knowledge validation</span> to existing JWT workflows.
           </p>
         </motion.div>
 

@@ -22,11 +22,14 @@ export type {
   TransactionResult
 } from './types';
 
-// Export main modules (will be implemented in T2.2-T2.4)
-// export { MerkleTreeBuilder } from './merkle';
-// export { ProofGenerator } from './prover';
-// export { ProofVerifier } from './verifier';
-// export { ContractClient } from './contract';
+// Export main modules
+export { MerkleTreeBuilder } from './merkle';
+// export { ProofGenerator } from './prover'; // T2.3
+// export { ProofVerifier } from './verifier'; // T2.3
+// export { ContractClient } from './contract'; // T2.4
+
+// Export constants
+export { CIRCUIT_ARTIFACTS, CONTRACT_ABI, DEFAULT_CONTRACT_CONFIG } from './constants';
 
 /**
  * Library version

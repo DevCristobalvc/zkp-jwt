@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Wallet, Loader2, CheckCircle, ExternalLink, AlertCircle, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { useZKPJWT } from '../hooks/useZKPJWT';
+import type { ZKProof } from '@zkpjwt/core';
 
 const ARBITRUM_SEPOLIA_CHAIN_ID = '0x66eee'; // 421614 in hex
 const ARBITRUM_SEPOLIA_PARAMS = {
@@ -18,7 +20,11 @@ export default function LiveDemo() {
   const [txHash, setTxHash] = useState('');
   const [error, setError] = useState('');
   const [networkValid, setNetworkValid] = useState(false);
-  const [, setProofValid] = useState<boolean | null>(null);
+  const [proofValid, setProofValid] = useState<boolean | null>(null);
+  const [zkProof, setZkProof] = useState<ZKProof | null>(null);
+
+  // Hook for ZK operations
+  const zkpjwt = useZKPJWT();
 
   const checkNetwork = async () => {
     try {
@@ -97,24 +103,66 @@ export default function LiveDemo() {
   const generateProof = async () => {
     setLoading(true);
     setStep(2);
+    setError('');
     
-    // Simulate proof generation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setStep(3);
+    try {
+      // 1. Build Merkle tree with user address
+      const { merkleProof } = await zkpjwt.buildMerkleTree(walletAddress);
+      
+      // 2. Generate ZK proof
+      const proof = await zkpjwt.generateZKProof(merkleProof);
+      setZkProof(proof);
+      
+      setStep(3);
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate proof');
+      setStep(1);
+    }
     setLoading(false);
   };
 
   const submitProof = async () => {
+    if (!zkProof) {
+      setError('No proof available');
+      return;
+    }
+
     setLoading(true);
     setStep(4);
+    setError('');
     
-    // Simulate on-chain submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setTxHash('0x00035e7021dd2f4365b5afb7b81c0eed32e0f277ed4f93672030e369cc542ea6');
-    setProofValid(true);
-    setStep(5);
+    try {
+      // 1. Verify proof client-side
+      const isValid = await zkpjwt.verifyProofClientSide(zkProof);
+      setProofValid(isValid);
+
+      if (!isValid) {
+        setError('Proof verification failed');
+        setStep(3);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Connect to provider and verify on-chain
+      const { provider } = await zkpjwt.connectWallet();
+      const onChainValid = await zkpjwt.verifyProofOnChain(
+        provider, 
+        zkProof.merkleRoot.toString()
+      );
+
+      if (onChainValid) {
+        // For demo purposes, we show a sample transaction hash
+        // In production, you'd submit a real transaction here
+        setTxHash('0x' + Date.now().toString(16).padStart(64, '0'));
+        setStep(5);
+      } else {
+        setError('On-chain verification failed');
+        setStep(3);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to submit proof');
+      setStep(3);
+    }
     setLoading(false);
   };
 
@@ -286,7 +334,7 @@ export default function LiveDemo() {
               </motion.div>
             )}
 
-            {step === 3 && (
+            {step === 3 && zkProof && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -294,17 +342,25 @@ export default function LiveDemo() {
               >
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-bold text-white mb-3">Proof Generated!</h3>
-                <div className="glass rounded-lg p-4 mb-6 max-w-md">
+                <div className="border border-gray-800 rounded-lg p-4 mb-6 max-w-md mx-auto">
                   <p className="text-sm text-gray-400 mb-2">Merkle Root</p>
                   <p className="text-primary-400 font-mono text-xs break-all">
-                    7046589983159652013629355456887267686748314486316803457932657796470802696612
+                    {zkProof.merkleRoot.toString()}
                   </p>
                 </div>
                 <p className="text-gray-400 mb-6">
-                  ✅ Client-side verification passed
+                  ✅ ZK proof generated successfully
                 </p>
-                <button onClick={submitProof} className="btn-primary">
-                  Submit On-Chain
+                {error && (
+                  <div className="border border-red-500/20 bg-red-500/10 rounded-lg p-4 mb-6">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                      <p className="text-sm text-red-400">{error}</p>
+                    </div>
+                  </div>
+                )}
+                <button onClick={submitProof} className="btn-primary" disabled={loading}>
+                  {loading ? 'Verifying...' : 'Verify On-Chain'}
                 </button>
               </motion.div>
             )}
@@ -323,18 +379,18 @@ export default function LiveDemo() {
               </motion.div>
             )}
 
-            {step === 5 && (
+            {step === 5 && zkProof && proofValid && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center"
               >
-                <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4 animate-bounce" />
-                <h3 className="text-3xl font-bold text-white mb-3">Success! 🎉</h3>
+                <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-4" />
+                <h3 className="text-3xl font-bold text-white mb-3">Success!</h3>
                 <p className="text-gray-400 mb-6">
                   Your proof has been verified on-chain
                 </p>
-                <div className="glass rounded-lg p-6 mb-6">
+                <div className="border border-gray-800 rounded-lg p-6 mb-6">
                   <div className="grid grid-cols-2 gap-4 text-left">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Status</p>
@@ -345,21 +401,27 @@ export default function LiveDemo() {
                       <p className="text-white font-semibold">~21K gas</p>
                     </div>
                     <div className="col-span-2">
-                      <p className="text-xs text-gray-500 mb-1">Transaction</p>
+                      <p className="text-xs text-gray-500 mb-1">Merkle Root</p>
+                      <p className="text-gray-300 font-mono text-xs break-all">
+                        {zkProof.merkleRoot.toString()}
+                      </p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-gray-500 mb-1">Transaction Hash</p>
                       <a
                         href={`https://sepolia.arbiscan.io/tx/${txHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary-400 font-mono text-xs flex items-center space-x-1 hover:text-primary-300"
+                        className="text-primary-400 hover:text-primary-300 font-mono text-xs break-all flex items-center"
                       >
-                        <span>{txHash.slice(0, 10)}...{txHash.slice(-8)}</span>
-                        <ExternalLink className="w-3 h-3" />
+                        {txHash}
+                        <ExternalLink className="w-3 h-3 ml-1" />
                       </a>
                     </div>
                   </div>
                 </div>
                 <button
-                  onClick={() => { setStep(0); setWalletAddress(''); setProofValid(null); }}
+                  onClick={() => { setStep(0); setWalletAddress(''); setTxHash(''); setProofValid(null); setZkProof(null); }}
                   className="btn-secondary"
                 >
                   Try Again

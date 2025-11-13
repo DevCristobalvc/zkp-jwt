@@ -1,30 +1,97 @@
 import { motion } from 'framer-motion';
-import { Wallet, Loader2, CheckCircle, ExternalLink } from 'lucide-react';
+import { Wallet, Loader2, CheckCircle, ExternalLink, AlertCircle, LogOut } from 'lucide-react';
 import { useState } from 'react';
+
+const ARBITRUM_SEPOLIA_CHAIN_ID = '0x66eee'; // 421614 in hex
+const ARBITRUM_SEPOLIA_PARAMS = {
+  chainId: ARBITRUM_SEPOLIA_CHAIN_ID,
+  chainName: 'Arbitrum Sepolia',
+  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+  rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
+  blockExplorerUrls: ['https://sepolia.arbiscan.io'],
+};
 
 export default function LiveDemo() {
   const [walletAddress, setWalletAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [txHash, setTxHash] = useState('');
+  const [error, setError] = useState('');
+  const [networkValid, setNetworkValid] = useState(false);
   const [, setProofValid] = useState<boolean | null>(null);
+
+  const checkNetwork = async () => {
+    try {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const isValid = chainId === ARBITRUM_SEPOLIA_CHAIN_ID;
+      setNetworkValid(isValid);
+      return isValid;
+    } catch (err) {
+      console.error('Error checking network:', err);
+      return false;
+    }
+  };
+
+  const switchNetwork = async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ARBITRUM_SEPOLIA_CHAIN_ID }],
+      });
+      setNetworkValid(true);
+      setError('');
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [ARBITRUM_SEPOLIA_PARAMS],
+          });
+          setNetworkValid(true);
+          setError('');
+        } catch (addError) {
+          setError('Failed to add Arbitrum Sepolia network');
+        }
+      } else {
+        setError('Failed to switch to Arbitrum Sepolia');
+      }
+    }
+  };
 
   const connectWallet = async () => {
     if (typeof window.ethereum === 'undefined') {
-      alert('Please install MetaMask!');
+      setError('Please install MetaMask!');
       return;
     }
 
     setLoading(true);
+    setError('');
+    
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       setWalletAddress(accounts[0]);
-      setStep(1);
-      setStep(1);
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
+      
+      // Check network
+      const isValidNetwork = await checkNetwork();
+      if (!isValidNetwork) {
+        setError('Please switch to Arbitrum Sepolia network');
+        setStep(0);
+      } else {
+        setStep(1);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to connect wallet');
     }
     setLoading(false);
+  };
+
+  const disconnectWallet = () => {
+    setWalletAddress('');
+    setStep(0);
+    setTxHash('');
+    setError('');
+    setNetworkValid(false);
   };
 
   const generateProof = async () => {
@@ -115,19 +182,30 @@ export default function LiveDemo() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center"
+                className="text-center w-full max-w-md mx-auto"
               >
                 <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary-500 to-blue-600 flex items-center justify-center">
                   <Wallet className="w-10 h-10 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">Connect Your Wallet</h3>
-                <p className="text-gray-400 mb-6 max-w-md mx-auto">
+                <p className="text-gray-400 mb-6">
                   Connect MetaMask to get started. Make sure you're on Arbitrum Sepolia network.
                 </p>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="glass rounded-lg p-4 mb-4 border border-red-500/30">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                      <p className="text-sm text-red-400 text-left">{error}</p>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={connectWallet}
                   disabled={loading}
-                  className="btn-primary"
+                  className="btn-primary w-full sm:w-auto"
                 >
                   {loading ? (
                     <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Connecting...</>
@@ -142,17 +220,55 @@ export default function LiveDemo() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center"
+                className="text-center w-full"
               >
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                 <h3 className="text-2xl font-bold text-white mb-3">Wallet Connected!</h3>
-                <div className="glass rounded-lg p-4 mb-6 inline-block">
+                
+                <div className="glass rounded-lg p-4 mb-4 inline-block">
                   <p className="text-sm text-gray-400 mb-1">Your Address</p>
                   <p className="text-primary-400 font-mono">{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</p>
                 </div>
-                <button onClick={generateProof} className="btn-primary">
-                  Generate ZK Proof
-                </button>
+
+                {/* Network Warning */}
+                {!networkValid && (
+                  <div className="glass rounded-lg p-4 mb-4 max-w-md mx-auto border border-yellow-500/30">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5" />
+                      <div className="text-left">
+                        <p className="text-yellow-500 font-semibold mb-1">Wrong Network</p>
+                        <p className="text-sm text-gray-400 mb-3">Please switch to Arbitrum Sepolia testnet</p>
+                        <button onClick={switchNetwork} className="text-xs px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 rounded-lg transition-colors">
+                          Switch Network
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <div className="glass rounded-lg p-4 mb-4 max-w-md mx-auto border border-red-500/30">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                      <p className="text-sm text-red-400">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center space-x-3">
+                  <button 
+                    onClick={generateProof} 
+                    className="btn-primary"
+                    disabled={!networkValid}
+                  >
+                    Generate ZK Proof
+                  </button>
+                  <button onClick={disconnectWallet} className="btn-secondary flex items-center space-x-2">
+                    <LogOut className="w-4 h-4" />
+                    <span>Disconnect</span>
+                  </button>
+                </div>
               </motion.div>
             )}
 

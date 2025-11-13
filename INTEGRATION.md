@@ -150,18 +150,31 @@ sequenceDiagram
 
 **Última build exitosa:**
 ```bash
-npm run build
+npx vite build
 
-✓ 4225 modules transformed
+✓ 4312 modules transformed
 ✓ dist/index.html                      0.46 kB
-✓ dist/assets/index-CN8ydJvn.js    4,360.33 kB │ gzip: 1,803.01 kB
-✓ built in 5.33s
+✓ dist/assets/index-CY0wYaID.js    4,496.29 kB │ gzip: 1,844.62 kB
+✓ built in 6.89s
 ```
+
+**Circuit Artifacts Deployed:**
+```bash
+frontend/public/circuits/
+├── circuit.wasm             1.9 MB  (Circom circuit compiled to WASM)
+├── proving_key.zkey         2.4 MB  (Groth16 proving key) 
+└── verification_key.json    2.9 KB  (Verification key for client-side)
+```
+
+**Paths Configuration:**
+- ProofGenerator: `/circuits/circuit.wasm`, `/circuits/proving_key.zkey`
+- ProofVerifier: `/circuits/verification_key.json`
 
 **Warnings conocidos:**
 - ⚠️ Algunos chunks >500KB (Mermaid + circomlibjs + snarkjs)
 - ⚠️ Módulos Node.js externalizados (resuelto con polyfills)
 - ⚠️ TypeScript type errors en vite.config.ts (no afectan funcionalidad)
+- ⚠️ Circuit files are large (4.3 MB total) - normal for ZK applications
 
 ### Testing
 

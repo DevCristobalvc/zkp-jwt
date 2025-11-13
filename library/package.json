@@ -1,7 +1,7 @@
 {
   "name": "zkpjwt-core",
-  "version": "0.1.0",
-  "description": "Zero-Knowledge Proof JSON Web Token - Core library for proof generation and verification",
+  "version": "0.1.1",
+  "description": "Zero-Knowledge Proof access control for Web3 - Privacy-preserving wallet allowlists using ZK proofs and Merkle trees on Arbitrum Stylus",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -36,13 +36,21 @@
     "stylus",
     "privacy"
   ],
-  "author": "DevCristobalvc",
+  "author": {
+    "name": "Cristobal Valencia",
+    "email": "cristobalvalencia3002@gmail.com",
+    "url": "https://github.com/DevCristobalvc"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DevCristobalvc/zkp-jwt.git",
     "directory": "library"
   },
+  "bugs": {
+    "url": "https://github.com/DevCristobalvc/zkp-jwt/issues"
+  },
+  "homepage": "https://zkpjwt.vercel.app",
   "dependencies": {
     "circomlibjs": "^0.1.7",
     "ethers": "^6.13.0",
@@ -60,9 +68,5 @@
   },
   "directories": {
     "test": "tests"
-  },
-  "bugs": {
-    "url": "https://github.com/DevCristobalvc/zkp-jwt/issues"
-  },
-  "homepage": "https://github.com/DevCristobalvc/zkp-jwt#readme"
+  }
 }

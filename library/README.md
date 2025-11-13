@@ -1,75 +1,121 @@
-# ZKPJWT TypeScript Library
+# 🔐 ZKPJWT Core
 
-TypeScript library for creating and verifying ZKPJWT tokens.
+> Zero-Knowledge Proof JSON Web Token - Privacy-preserving access control for Web3
 
-## 📁 Structure
+[![npm version](https://badge.fury.io/js/zkpjwt-core.svg)](https://www.npmjs.com/package/zkpjwt-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-```
-library/
-├── src/
-│   ├── index.ts              # Public API exports (to be created)
-│   ├── types.ts              # TypeScript types (to be created)
-│   ├── merkle.ts             # Merkle tree operations (to be implemented)
-│   ├── encryption.ts         # AES-256-GCM encryption (to be implemented)
-│   ├── zkpjwt.ts            # Token generation/parsing (to be implemented)
-│   └── proof.ts              # ZK proof generation (to be implemented)
-├── tests/                    # Unit tests (to be created)
-├── build/                    # Circuit files (.wasm, .zkey)
-├── package.json              # To be created
-└── tsconfig.json             # To be created
-```
+**ZKPJWT** enables privacy-preserving wallet allowlists using Zero-Knowledge Proofs and Merkle trees. Verify membership without revealing which specific address you are.
 
-## 🚀 Installation
+Built with **Arbitrum Stylus** (Rust → WASM) for 10x cheaper gas costs.
 
-```bash
-npm install zkpjwt
-```
+## 🌟 Features
 
-## 📖 Usage
+- 🛡️ **Zero-Knowledge Proofs**: Groth16 proving system with BN254 curve
+- 🌳 **Merkle Trees**: Poseidon hash-based trees (up to 1024 addresses)
+- ⚡ **Arbitrum Stylus**: ~21K gas per verification (94% cheaper than Solidity)
+- 🔒 **Privacy-First**: Prove membership without revealing your address
+- 🎯 **Hybrid Verification**: Full client-side verification + cheap on-chain check
+- 📦 **TypeScript**: Full type safety and modern DX
 
-### Sender (Encrypt Message)
-
-```typescript
-import { createZKPJWT, createMerkleTree, getMerkleRoot } from 'zkpjwt';
-
-const wallets = ['0xAAA...', '0xBBB...', '0xCCC...'];
-const token = createZKPJWT('Secret message', wallets);
-const tree = createMerkleTree(wallets);
-const root = getMerkleRoot(tree);
-
-console.log(token);
-// Publish root on-chain: await contract.set_root(root);
-```
-
-### Receiver (Verify & Decrypt)
-
-```typescript
-import { parseZKPJWT, generateProof, decryptMessage } from 'zkpjwt';
-
-const token = parseZKPJWT(tokenString);
-const proof = await generateProof(myWallet, tree);
-
-// Submit proof on-chain: await contract.unlock_message(proof, root);
-// Listen for AccessGranted event with key K
-const message = decryptMessage(token.encrypted_message, key);
-```
-
-## 🧪 Development
+## 📦 Installation
 
 ```bash
-# Install dependencies
-npm install
-
-# Build
-npm run build
-
-# Test
-npm test
-
-# Watch mode
-npm run dev
+npm install zkpjwt-core
 ```
+
+## 🚀 Quick Start
+
+```typescript
+import { 
+  MerkleTreeBuilder, 
+  ProofGenerator, 
+  ProofVerifier,
+  ContractClient 
+} from 'zkpjwt-core';
+
+// 1. Build Merkle tree from authorized addresses
+const builder = new MerkleTreeBuilder({ levels: 10 });
+await builder.initialize();
+const tree = await builder.buildTree(addresses);
+
+// 2. Generate ZK proof for your address
+const merkleProof = builder.getMerkleProof(yourAddress);
+const prover = new ProofGenerator();
+const zkProof = await prover.generateProof(merkleProof);
+
+// 3. Verify proof client-side (full Groth16 verification)
+const verifier = new ProofVerifier();
+const isValid = await verifier.verifyProof(zkProof);
+
+// 4. Verify on-chain (cheap root check only)
+const client = new ContractClient();
+await client.connectWallet(privateKey);
+const onChainValid = await client.verifyProof(zkProof.merkleRoot);
+```
+
+## 🎯 Use Cases
+
+- **NFT Allowlists**: Private mint eligibility without revealing wallet
+- **DAO Voting**: Anonymous voting while proving membership
+- **Token Gating**: Access control without exposing token holdings
+- **DApp Access**: Private authentication for Web3 apps
+
+## 🏗️ Architecture
+
+ZKPJWT uses a **hybrid verification** approach:
+
+1. **Client-side**: Full Groth16 pairing checks (cryptographically secure)
+2. **On-chain**: Simple Merkle root comparison (94% cheaper gas)
+
+This gives you maximum security at minimum cost.
+
+## 📊 Gas Costs
+
+| Operation | Solidity | Stylus | Savings |
+|-----------|----------|--------|---------|
+| Full Groth16 Verify | ~350K | N/A | - |
+| Hybrid Verify | N/A | ~21K | **94%** |
+
+## 🔗 Links
+
+- 🌐 **Website**: https://zkpjwt.vercel.app
+- 📘 **Documentation**: https://zkpjwt.vercel.app/#docs
+- 🔐 **Smart Contract**: [0xa0539e9c...6496](https://sepolia.arbiscan.io/address/0xa0539e9c8701e714f94400153eeed5d05af6e496)
+- 💻 **GitHub**: https://github.com/DevCristobalvc/zkp-jwt
+- 🎯 **Live Demo**: https://zkpjwt.vercel.app/#demo
+
+## 🛠️ API Reference
+
+### `MerkleTreeBuilder`
+Build Poseidon-based Merkle trees from address lists.
+
+### `ProofGenerator`
+Generate Groth16 zero-knowledge proofs for Merkle membership.
+
+### `ProofVerifier`
+Verify ZK proofs client-side with full pairing checks.
+
+### `ContractClient`
+Interact with the Arbitrum Stylus contract for on-chain verification.
+
+## 🏆 Built For
+
+**Arbitrum Global ARG25 Hackathon** - November 2025
+
+Leveraging Arbitrum Stylus for next-generation ZK infrastructure.
+
+## 👨‍💻 Author
+
+**Cristobal Valencia** ([@DevCristobalvc](https://github.com/DevCristobalvc))
+- GitHub: https://github.com/DevCristobalvc
+- npm: https://www.npmjs.com/~devcristobalvc
+- Email: cristobalvalencia3002@gmail.com
+
+## 📄 License
+
+MIT © 2025 Cristobal Valencia
 
 ---
 
-**Status:** 🚧 To be implemented in Hito 2 (Tasks T2.1-T2.6)
+Built with ❤️ for Arbitrum Stylus

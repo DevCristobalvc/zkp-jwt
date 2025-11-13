@@ -127,7 +127,7 @@ export default function LiveDemo() {
   ];
 
   return (
-    <section id="demo" className="py-20 relative">
+    <section id="demo" className="py-20 relative border-t border-gray-800">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -136,9 +136,9 @@ export default function LiveDemo() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="section-title mb-4">Live Demo</h2>
-          <p className="text-xl text-gray-400">
-            Try ZKPJWT in your browser with MetaMask
+          <h2 className="text-3xl font-bold text-white mb-4">Try It Live</h2>
+          <p className="text-gray-400">
+            Interactive demo with MetaMask on Arbitrum Sepolia
           </p>
         </motion.div>
 
@@ -147,7 +147,7 @@ export default function LiveDemo() {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="card"
+          className="border border-gray-800 rounded-lg p-8"
         >
           {/* Progress Steps */}
           <div className="mb-8">

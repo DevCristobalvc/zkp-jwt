@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Key, Database, AlertTriangle, Shield, ExternalLink } from 'lucide-react';
+import { Key, Database, AlertTriangle, Shield } from 'lucide-react';
 
 export default function JWTPage() {
   return (

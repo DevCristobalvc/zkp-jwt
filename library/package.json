@@ -40,7 +40,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DevCristobalvc/zkp-jwt.git",
+    "url": "git+https://github.com/DevCristobalvc/zkp-jwt.git",
     "directory": "library"
   },
   "dependencies": {
@@ -57,5 +57,12 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "bugs": {
+    "url": "https://github.com/DevCristobalvc/zkp-jwt/issues"
+  },
+  "homepage": "https://github.com/DevCristobalvc/zkp-jwt#readme"
 }

@@ -29,6 +29,9 @@ export default function Navbar() {
             <a href="#features" className="text-gray-300 hover:text-white transition-colors">
               Features
             </a>
+            <a href="#use-cases" className="text-gray-300 hover:text-white transition-colors">
+              Use Cases
+            </a>
             <a href="#docs" className="text-gray-300 hover:text-white transition-colors">
               Docs
             </a>
@@ -73,6 +76,9 @@ export default function Navbar() {
           <div className="px-4 py-4 space-y-3">
             <a href="#features" className="block text-gray-300 hover:text-white transition-colors">
               Features
+            </a>
+            <a href="#use-cases" className="block text-gray-300 hover:text-white transition-colors">
+              Use Cases
             </a>
             <a href="#docs" className="block text-gray-300 hover:text-white transition-colors">
               Docs

@@ -84,7 +84,8 @@ export function useZKPJWT() {
       setLoading(true);
       setError(null);
 
-      const prover = new ProofGenerator();
+      // Create prover with custom paths (files are in /circuits/ folder)
+      const prover = new ProofGenerator('/circuits/circuit.wasm', '/circuits/proving_key.zkey');
       const zkProof = await prover.generateProof(merkleProof);
 
       setLoading(false);
@@ -102,7 +103,8 @@ export function useZKPJWT() {
       setLoading(true);
       setError(null);
 
-      const verifier = new ProofVerifier();
+      // Create verifier with custom verification key path
+      const verifier = new ProofVerifier('/circuits/verification_key.json');
       const result = await verifier.verifyProof(zkProof);
 
       setLoading(false);

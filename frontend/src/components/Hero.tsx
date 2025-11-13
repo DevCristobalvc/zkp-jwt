@@ -53,12 +53,12 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <a href="#demo" className="btn-primary flex items-center space-x-2 group">
-            <span>Try Live Demo</span>
+          <a href="#content" className="btn-primary flex items-center space-x-2 group">
+            <span>Explore Documentation</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </a>
-          <a href="#docs" className="btn-secondary">
-            Read Documentation
+          <a href="#demo" className="btn-secondary">
+            Try Live Demo
           </a>
         </motion.div>
 

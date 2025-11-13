@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Copy, Check, Terminal, Package } from 'lucide-react';
+import { Copy, Check, Terminal, Package, Shield, Zap } from 'lucide-react';
 import { useState } from 'react';
 
 const codeBlocks = {
@@ -167,7 +167,10 @@ export default function Documentation() {
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <div className="card">
-              <h4 className="text-lg font-semibold text-white mb-3">🔐 Zero-Knowledge</h4>
+              <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
+                <Shield className="w-5 h-5 text-primary-400" />
+                <span>Zero-Knowledge</span>
+              </h4>
               <ul className="space-y-2 text-gray-400">
                 <li>• Groth16 proving system</li>
                 <li>• BN254 elliptic curve</li>
@@ -176,7 +179,10 @@ export default function Documentation() {
               </ul>
             </div>
             <div className="card">
-              <h4 className="text-lg font-semibold text-white mb-3">⚡ Arbitrum Stylus</h4>
+              <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
+                <Zap className="w-5 h-5 text-blue-400" />
+                <span>Arbitrum Stylus</span>
+              </h4>
               <ul className="space-y-2 text-gray-400">
                 <li>• Written in Rust</li>
                 <li>• Compiled to WASM</li>

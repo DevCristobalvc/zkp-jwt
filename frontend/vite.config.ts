@@ -4,9 +4,10 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vite.dev/config/
 export default defineConfig({
-  // @ts-ignore - vite plugin types mismatch
   plugins: [
+    // @ts-expect-error - Plugin type mismatch between workspace and local vite versions
     react(),
+    // @ts-expect-error - Plugin type mismatch between workspace and local vite versions
     nodePolyfills({
       // Include specific polyfills
       include: ['buffer', 'events', 'assert', 'stream'],

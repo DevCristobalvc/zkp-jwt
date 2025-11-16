@@ -6,6 +6,37 @@
 
 **Privacy-preserving access control protocol using Zero-Knowledge Proofs and Arbitrum Stylus**
 
+--
+
+```
+// OFF-CHAIN: Encryption
+const encrypted = encryptMessage(message); // AES-256-GCM local
+
+// ON-CHAIN: Solo se publica el root
+await contract.publishRoot(merkleRoot);
+```
+```
+wallets → [hash(w1), hash(w2), hash(w3)]
+       ↓
+   Merkle Tree
+       ↓
+   Root (on-chain)
+```
+```
+         ROOT
+        /    \
+      H1      H2
+     / \     / \
+    A   B   C   D
+```
+
+To prove you are the child of "ROOT", you only need:
+- Your birth certificate (leaf)
+- Your sibling's birth certificate (proof[0])
+- Your uncles' birth certificates (proof[1])
+
+With these documents, you can reconstruct the entire family
+and prove you belong to the family tree without showing the ENTIRE family.
 ---
 
 ## 🎯 What is ZKPJWT?

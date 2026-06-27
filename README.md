@@ -6,6 +6,12 @@
 
 **Privacy-preserving access control protocol using Zero-Knowledge Proofs and Arbitrum Stylus**
 
+> ⭐ **Stellar adaptation:** the Merkle-membership circuit was ported to **BLS12-381 + Poseidon** and is now verified
+> **on-chain by a Stellar Soroban contract** (native pairing, CAP-0052) as the ZK layer of
+> [MedVault](https://github.com/DevCristobalvc/medvault-stellar). See [`stellar/README.md`](stellar/README.md) for the
+> circuit, the on-chain Groth16 verifier, and the in-browser prover. The original Arbitrum/Stylus protocol is documented
+> below.
+
 --
 
 ```

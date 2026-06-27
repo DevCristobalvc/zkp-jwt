@@ -165,8 +165,10 @@ node test/validate_circuit.mjs            # 4 passed, 0 failed
 DUMP_FIXTURE=1 node test/verify_onchain.mjs   # on-chain result: true
 ```
 
-> **Trusted setup note:** the committed `zkey` uses a single development contribution from a Powers-of-Tau (pot14)
-> ceremony. A multi-party ceremony is required before any mainnet use.
+> **Trusted setup:** the `zkey` is produced by a reproducible multi-contribution Powers-of-Tau + Phase-2 ceremony
+> finalized with a public random beacon ([`setup_stellar.sh`](./setup_stellar.sh), documented in
+> [`CEREMONY.md`](./CEREMONY.md)). The committed contributions were made on a single machine; an independent-party
+> ceremony with a public beacon is required before any mainnet use.
 
 ---
 

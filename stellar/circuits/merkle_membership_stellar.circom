@@ -39,6 +39,8 @@ template MerkleMembershipStellar(levels) {
     component rightSelector[levels];
 
     for (var i = 0; i < levels; i++) {
+        pathIndices[i] * (1 - pathIndices[i]) === 0;
+
         leftSelector[i] = Mux1();
         rightSelector[i] = Mux1();
 

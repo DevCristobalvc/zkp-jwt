@@ -17,7 +17,7 @@ import { execFileSync } from 'child_process'
 
 const __dir = dirname(fileURLToPath(import.meta.url))
 const BUILD = join(__dir, '../build')
-const CONTRACT_ID = process.env.CONTRACT_ID || 'CAUUBZYILFYVHS2IYJDMXR4GUZ2LLYVWR25W7C5PXC7A5PF3QHIUWH2M'
+const CONTRACT_ID = process.env.CONTRACT_ID || 'CBYNTUAVZ4OSILWID7HE6AYF7FNOJTT2M77TZJ6GUU32VGBXUCMIUBBK'
 const G2ORDER = process.env.G2ORDER || 'c1'
 const SOURCE = process.env.SOURCE || 'doctor'
 const NETWORK = process.env.NETWORK || 'testnet'

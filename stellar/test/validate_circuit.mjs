@@ -140,6 +140,9 @@ async function main() {
 
   console.log(`\nRESULT: ${pass} passed, ${fail} failed`)
   console.log('NOTE: test 3 reports a FAIL when the selector is NOT range-checked — that is the finding, not a test error.')
+  return fail
 }
 function p() { return 0x73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001n }
-main().catch((e) => { console.error('FATAL:', e.message || e); process.exit(1) })
+main()
+  .then((fail) => process.exit(fail ? 1 : 0))
+  .catch((e) => { console.error('FATAL:', e.message || e); process.exit(1) })

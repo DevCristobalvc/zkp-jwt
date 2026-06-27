@@ -7,6 +7,7 @@ import ZKPPage from './pages/ZKP';
 import LibraryPage from './pages/Library';
 import ArchitecturePage from './pages/Architecture';
 import ResourcesPage from './pages/Resources';
+import StellarPage from './pages/Stellar';
 import './index.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/zkp" element={<ZKPPage />} />
           <Route path="/library" element={<LibraryPage />} />
           <Route path="/architecture" element={<ArchitecturePage />} />
+          <Route path="/stellar" element={<StellarPage />} />
           <Route path="/docs" element={<LibraryPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
         </Routes>

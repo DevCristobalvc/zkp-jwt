@@ -27,6 +27,9 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-1">
+            <Link to="/stellar" className="px-3 py-2 text-sm text-primary-400 hover:text-primary-300 transition-colors font-medium">
+              Stellar
+            </Link>
             <Link to="/library" className="px-3 py-2 text-sm text-gray-400 hover:text-white transition-colors">
               Docs
             </Link>
@@ -70,6 +73,9 @@ export default function Navbar() {
           className="md:hidden bg-gray-950 border-t border-gray-800"
         >
           <div className="px-4 py-4 space-y-3">
+            <Link to="/stellar" className="block text-primary-400 hover:text-primary-300 transition-colors font-medium" onClick={() => setIsOpen(false)}>
+              Stellar
+            </Link>
             <Link to="/library" className="block text-gray-400 hover:text-white transition-colors" onClick={() => setIsOpen(false)}>
               Docs
             </Link>

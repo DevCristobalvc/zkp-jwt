@@ -7,7 +7,8 @@ interface MermaidDiagramProps {
 }
 
 mermaid.initialize({
-  startOnLoad: true,
+  startOnLoad: false,
+  securityLevel: 'loose',
   theme: 'dark',
   themeVariables: {
     primaryColor: '#3b82f6',
@@ -29,20 +30,35 @@ mermaid.initialize({
   },
 });
 
+let diagramCounter = 0;
+
 export default function MermaidDiagram({ chart, className = '' }: MermaidDiagramProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.innerHTML = chart;
-      mermaid.contentLoaded();
-    }
+    let cancelled = false;
+    const id = `mermaid-${diagramCounter++}`;
+
+    mermaid
+      .render(id, chart)
+      .then(({ svg }) => {
+        if (!cancelled && ref.current) ref.current.innerHTML = svg;
+      })
+      .catch((error) => {
+        if (!cancelled && ref.current) {
+          ref.current.innerHTML = `<pre class="text-red-400 text-xs whitespace-pre-wrap">${String(error)}</pre>`;
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [chart]);
 
   return (
-    <div 
-      ref={ref} 
-      className={`mermaid bg-gray-900 rounded-lg p-6 overflow-x-auto ${className}`}
+    <div
+      ref={ref}
+      className={`bg-gray-900 rounded-lg p-6 overflow-x-auto ${className}`}
     />
   );
 }
